@@ -1,5 +1,8 @@
 package com.wxx.ibeaconset.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -69,7 +72,7 @@ public class PageList {
             this.pages = pages;
         }
 
-        public static class PagesBean {
+        public static class PagesBean implements Parcelable {
             /**
              * comment : just for test
              * description : test
@@ -145,6 +148,45 @@ public class PageList {
                         ", title='" + title + '\'' +
                         '}';
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.comment);
+                dest.writeString(this.description);
+                dest.writeString(this.icon_url);
+                dest.writeInt(this.page_id);
+                dest.writeString(this.page_url);
+                dest.writeString(this.title);
+            }
+
+            public PagesBean() {
+            }
+
+            protected PagesBean(Parcel in) {
+                this.comment = in.readString();
+                this.description = in.readString();
+                this.icon_url = in.readString();
+                this.page_id = in.readInt();
+                this.page_url = in.readString();
+                this.title = in.readString();
+            }
+
+            public static final Parcelable.Creator<PagesBean> CREATOR = new Parcelable.Creator<PagesBean>() {
+                @Override
+                public PagesBean createFromParcel(Parcel source) {
+                    return new PagesBean(source);
+                }
+
+                @Override
+                public PagesBean[] newArray(int size) {
+                    return new PagesBean[size];
+                }
+            };
         }
     }
 }

@@ -34,14 +34,16 @@ public class MainPresenter extends BasePresenter<MainView> {
 
                 @Override
                 public void onFail(String msg) {
-
+                    if (view != null) {
+                        view.onFail(msg);
+                    }
                 }
             });
         }
     }
 
 
-    public void FetchDeviceList(String token,int begin) {
+    public void FetchDeviceList(String token, int begin) {
         if (model != null) {
             model.loadDeviceList(new MainModel.OnDeviceListListener() {
                 @Override
@@ -53,9 +55,11 @@ public class MainPresenter extends BasePresenter<MainView> {
 
                 @Override
                 public void onFail(String msg) {
-
+                    if (view != null) {
+                        view.onFail(msg);
+                    }
                 }
-            }, token,begin);
+            }, token, begin);
         }
     }
 

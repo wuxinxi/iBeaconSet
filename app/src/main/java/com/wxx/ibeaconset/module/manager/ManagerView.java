@@ -15,4 +15,6 @@ public interface ManagerView {
     void onFail(String msg);
 
     void onPageList(int type, List<PageList.DataBean.PagesBean> pagesBeanList, int total_count);
+
+    void delResult(int postion, int code, String msg,List<PageList.DataBean.PagesBean> list);
 }

@@ -39,6 +39,7 @@ public class MainCompl implements MainModel {
                     listener.onSuccess(token);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    listener.onFail("异常：" + e.getMessage());
                 }
             }
 
@@ -55,14 +56,14 @@ public class MainCompl implements MainModel {
     public void loadDeviceList(final OnDeviceListListener listListener, final String token, int begin) {
         try {
             Request<JSONObject> request = NoHttp.createJsonObjectRequest(API.URL_SEARCH + token, RequestMethod.POST);
+            request.setCacheMode(CacheMode.REQUEST_NETWORK_FAILED_READ_CACHE);
             JSONObject object = new JSONObject();
 
             object.put("type", 2);
             object.put("begin", begin);
-            object.put("count", 20);
+            object.put("count", 15);
 
             request.setDefineRequestBodyForJson(object);
-            request.setCacheMode(CacheMode.NONE_CACHE_REQUEST_NETWORK);
             CallServer.getHttpclient().add(1, request, new HttpListener<JSONObject>() {
                         @Override
                         public void success(int what, Response<JSONObject> response) throws JSONException {
@@ -79,13 +80,14 @@ public class MainCompl implements MainModel {
 
                         @Override
                         public void fail(int what, Response<JSONObject> response) {
-                            Logger.d("失敗");
+                            listListener.onFail("网络或服务器异常！");
                         }
                     }
 
             );
         } catch (JSONException e) {
             e.printStackTrace();
+            listListener.onFail("异常：" + e.getMessage());
         }
     }
 }

@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.github.jdsjlzx.interfaces.OnLoadMoreListener;
 import com.github.jdsjlzx.interfaces.OnNetWorkErrorListener;
@@ -21,6 +20,7 @@ import com.wxx.ibeaconset.base.BaseActivity;
 import com.wxx.ibeaconset.bean.DeviceList;
 import com.wxx.ibeaconset.inte.OnItemclick;
 import com.wxx.ibeaconset.module.manager.ManagerPageActivity;
+import com.wxx.ibeaconset.module.relation.RelationActivity;
 
 import java.util.List;
 
@@ -66,6 +66,7 @@ public class MainActivity extends BaseActivity<MainView, MainPresenter> implemen
         mDialog = new ProgressDialog(this);
         mAdapter.setItemclick(this);
         mDialog.setMessage("正在加载请稍后……");
+        mDialog.setCanceledOnTouchOutside(false);
 
     }
 
@@ -129,8 +130,9 @@ public class MainActivity extends BaseActivity<MainView, MainPresenter> implemen
 
     @Override
     public void click(View view, int postion, List<DeviceList.DataBean.DevicesBean> devicesBeanList) {
-
-        Toast.makeText(this, devicesBeanList.toString(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MainActivity.this, RelationActivity.class);
+        intent.putExtra("device_id", devicesBeanList.get(postion - 1).getDevice_id());
+        startActivityFromRight(intent);
     }
 
     @Override

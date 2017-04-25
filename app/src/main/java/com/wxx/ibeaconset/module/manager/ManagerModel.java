@@ -20,4 +20,11 @@ public interface ManagerModel {
 
         void onFail(String msg);
     }
+
+    void loadDel(OnDelListener listener, int page_id, int postion,List<PageList.DataBean.PagesBean> list);
+
+    interface OnDelListener {
+        void delResult(int postion, int code, String msg,List<PageList.DataBean.PagesBean> list);
+    }
+
 }

@@ -8,8 +8,10 @@ import com.squareup.picasso.Picasso;
 import com.wxx.ibeaconset.MyApplication;
 import com.wxx.ibeaconset.R;
 import com.wxx.ibeaconset.bean.PageList;
+import com.wxx.ibeaconset.inte.OnIteLongClick;
 import com.wxx.ibeaconset.inte.OnItemclick;
 import com.wxx.ibeaconset.viewholder.PageHolder;
+import com.yanzhenjie.nohttp.Logger;
 
 import java.util.List;
 
@@ -25,11 +27,12 @@ public class PageAdapter extends RecyclerView.Adapter<PageHolder> {
     private List<PageList.DataBean.PagesBean> pagesBeanList;
     private LayoutInflater mInflater;
     private OnItemclick itemclick;
+    private OnIteLongClick iteLongClick;
 
     @Override
     public PageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mInflater = LayoutInflater.from(parent.getContext());
-        return new PageHolder(mInflater.inflate(R.layout.item_page_list, parent, false), itemclick, pagesBeanList);
+        return new PageHolder(mInflater.inflate(R.layout.item_page_list, parent, false), itemclick, iteLongClick, pagesBeanList);
     }
 
     @Override
@@ -51,11 +54,16 @@ public class PageAdapter extends RecyclerView.Adapter<PageHolder> {
 
     @Override
     public int getItemCount() {
+        Logger.d("pagesBeanList.size():" + pagesBeanList.size());
         return pagesBeanList == null ? 0 : pagesBeanList.size();
     }
 
     public void setItemclick(OnItemclick itemclick) {
         this.itemclick = itemclick;
+    }
+
+    public void setItemLongClick(OnIteLongClick iteLongClick) {
+        this.iteLongClick = iteLongClick;
     }
 
     public void add(List<PageList.DataBean.PagesBean> pagesBeanList) {

@@ -39,4 +39,17 @@ public class ManagerPresenter extends BasePresenter<ManagerView> {
             }, token, begin);
         }
     }
+
+
+    public void fetchDel(int page_id, int postion,List<PageList.DataBean.PagesBean> list) {
+        if (model != null) {
+            model.loadDel(new ManagerModel.OnDelListener() {
+                @Override
+                public void delResult(int postion, int code, String msg,List<PageList.DataBean.PagesBean> list) {
+                    if (view != null)
+                        view.delResult(postion, code, msg,list);
+                }
+            }, page_id, postion,list);
+        }
+    }
 }
