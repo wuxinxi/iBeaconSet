@@ -18,4 +18,6 @@ public interface MainView {
 
     void onDeviceList(List<DeviceList.DataBean.DevicesBean> devicesBeanList, int total_count);
 
+    void onRelationS(String msg);
+
 }

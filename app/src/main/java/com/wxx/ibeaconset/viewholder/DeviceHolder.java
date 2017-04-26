@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.wxx.ibeaconset.R;
 import com.wxx.ibeaconset.bean.DeviceList;
+import com.wxx.ibeaconset.inte.OnIteLongClick;
 import com.wxx.ibeaconset.inte.OnItemclick;
 
 import java.util.List;
@@ -17,9 +18,10 @@ import java.util.List;
  */
 
 
-public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
     private OnItemclick itemclick;
+    private OnIteLongClick onIteLongClick;
 
     private List<DeviceList.DataBean.DevicesBean> devicesBeanList;
 
@@ -31,7 +33,7 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
     public TextView last_active_time;
     public TextView uuid;
 
-    public DeviceHolder(View itemView, OnItemclick itemclick, List<DeviceList.DataBean.DevicesBean> devicesBeanList) {
+    public DeviceHolder(View itemView, OnItemclick itemclick, OnIteLongClick onIteLongClick, List<DeviceList.DataBean.DevicesBean> devicesBeanList) {
         super(itemView);
         comment = (TextView) itemView.findViewById(R.id.comment);
         device_id = (TextView) itemView.findViewById(R.id.device_id);
@@ -41,8 +43,10 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
         last_active_time = (TextView) itemView.findViewById(R.id.last_active_time);
         uuid = (TextView) itemView.findViewById(R.id.uuid);
         this.itemclick = itemclick;
+        this.onIteLongClick = onIteLongClick;
         this.devicesBeanList = devicesBeanList;
         itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
     }
 
     @Override
@@ -50,5 +54,12 @@ public class DeviceHolder extends RecyclerView.ViewHolder implements View.OnClic
         if (itemclick != null) {
             itemclick.click(itemView, getAdapterPosition(), devicesBeanList);
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (onIteLongClick != null)
+            onIteLongClick.longClick(v, getAdapterPosition() , devicesBeanList);
+        return true;
     }
 }

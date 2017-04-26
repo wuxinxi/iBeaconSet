@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 
 public interface UpdateModel {
-    void fetchUpdate(loadUpdate listener, PageList.DataBean.PagesBean pagesBean);
+    void fetchUpdate(loadUpdate listener, PageList.DataBean.PagesBean pagesBean,String activity);
 
     interface loadUpdate {
         void onSuccess(int code, int type, String msg);

@@ -13,6 +13,7 @@ import com.yanzhenjie.nohttp.rest.CacheMode;
 import com.yanzhenjie.nohttp.rest.Request;
 import com.yanzhenjie.nohttp.rest.Response;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -88,6 +89,54 @@ public class MainCompl implements MainModel {
         } catch (JSONException e) {
             e.printStackTrace();
             listListener.onFail("异常：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void loadRelation(final loadRelationListener listener, int device_id, int page_id) {
+        try {
+            Request<JSONObject> request = NoHttp.createJsonObjectRequest(API.URL_BINDPAGE + MyApplication.getInstance().getACCESSTION(), RequestMethod.POST);
+            request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
+
+            Logger.d("page_id:" + page_id);
+            Logger.d("device_id:" + device_id);
+
+            JSONObject object = new JSONObject();
+            JSONObject ob = new JSONObject();
+            ob.put("device_id", device_id);
+
+            object.put("device_identifier", ob);
+
+            JSONArray array = new JSONArray();
+            array.put(page_id);
+
+            object.put("page_ids", array);
+
+
+            Logger.d(object.toString());
+            request.setDefineRequestBodyForJson(object);
+            CallServer.getHttpclient().add(5, request, new HttpListener<JSONObject>() {
+                        @Override
+                        public void success(int what, Response<JSONObject> response) throws JSONException {
+                            Logger.d(response.get().toString());
+                            JSONObject ob = response.get();
+                            if (ob.getInt("errcode") == 0) {
+                                listener.onSuccess("配置成功！");
+                            } else {
+                                listener.onFail(ob.toString());
+                            }
+                        }
+
+                        @Override
+                        public void fail(int what, Response<JSONObject> response) {
+                            listener.onFail("网络或服务器异常！");
+                        }
+                    }
+
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+            listener.onFail("异常：" + e.getMessage());
         }
     }
 }

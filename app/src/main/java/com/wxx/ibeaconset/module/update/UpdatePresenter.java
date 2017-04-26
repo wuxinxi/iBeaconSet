@@ -20,7 +20,7 @@ public class UpdatePresenter extends BasePresenter<UpdateView> {
         this.view = view;
     }
 
-    public void fetchUpdate(PageList.DataBean.PagesBean pagesBean) {
+    public void fetchUpdate(PageList.DataBean.PagesBean pagesBean,String activity) {
         if (model != null) {
             model.fetchUpdate(new UpdateModel.loadUpdate() {
                 @Override
@@ -34,7 +34,7 @@ public class UpdatePresenter extends BasePresenter<UpdateView> {
                     if (view != null)
                         view.onFail(msg);
                 }
-            }, pagesBean);
+            }, pagesBean,activity);
         }
     }
 

@@ -60,6 +60,6 @@ public class PageHolder extends RecyclerView.ViewHolder implements View.OnClickL
         if (iteLongClick != null) {
             iteLongClick.longClick(v, getAdapterPosition(), pagesBeanList);
         }
-        return false;
+        return true;
     }
 }

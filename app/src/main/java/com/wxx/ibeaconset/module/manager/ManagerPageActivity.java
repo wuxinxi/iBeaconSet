@@ -57,6 +57,8 @@ public class ManagerPageActivity extends BaseActivity<ManagerView, ManagerPresen
 
     private int total_count;
 
+    private static final int DEFAULT_CODE = 0;
+
     @Override
     protected ManagerPresenter createPresenter() {
         return new ManagerPresenter(this);
@@ -85,6 +87,7 @@ public class ManagerPageActivity extends BaseActivity<ManagerView, ManagerPresen
         mDialog = new ProgressDialog(this);
         mDialog.setMessage("正在加载请稍后……");
         mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
     }
 
     @Override
@@ -150,7 +153,7 @@ public class ManagerPageActivity extends BaseActivity<ManagerView, ManagerPresen
         PageList.DataBean.PagesBean bean = list.get(postion - 1);
         Intent intent = new Intent(ManagerPageActivity.this, UpdateActivity.class);
         intent.putExtra("pageList", bean);
-        startActivityFromRight(intent);
+        startActivityFromRight(intent, DEFAULT_CODE);
     }
 
     @Override
@@ -168,5 +171,16 @@ public class ManagerPageActivity extends BaseActivity<ManagerView, ManagerPresen
                         dialog.dismiss();
                     }
                 }).setNegativeButton("取消", null).show();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.e("requestCode=" + requestCode + ",resultCode=" + resultCode);
+        if (resultCode == DEFAULT_CODE) {
+            begin = 0;
+            mPresenter.fetchPageList(MyApplication.getInstance().getACCESSTION(), begin);
+        }
     }
 }

@@ -21,10 +21,18 @@ public interface MainModel {
         void onFail(String msg);
     }
 
-    void loadDeviceList(OnDeviceListListener listListener, String token,int begin);
+    void loadDeviceList(OnDeviceListListener listListener, String token, int begin);
 
     interface OnDeviceListListener {
         void onSuccess(List<DeviceList.DataBean.DevicesBean> devicesBeanList, int total_count);
+
+        void onFail(String msg);
+    }
+
+    void loadRelation(loadRelationListener listener, int device_id, int page_id);
+
+    interface loadRelationListener {
+        void onSuccess(String msg);
 
         void onFail(String msg);
     }

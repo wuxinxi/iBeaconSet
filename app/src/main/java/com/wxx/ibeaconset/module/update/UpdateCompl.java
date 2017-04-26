@@ -28,21 +28,36 @@ import java.io.InputStream;
 public class UpdateCompl implements UpdateModel {
 
     @Override
-    public void fetchUpdate(loadUpdate listener, PageList.DataBean.PagesBean pagesBean) {
+    public void fetchUpdate(loadUpdate listener, PageList.DataBean.PagesBean pagesBean, String activity) {
         try {
-            Request<JSONObject> request = NoHttp.createJsonObjectRequest(API.URL_UPDATE + MyApplication.getInstance().getACCESSTION(), RequestMethod.POST);
-            request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
-            JSONObject object = new JSONObject();
+            if (activity.equals("manager")) {
+                Request<JSONObject> request = NoHttp.createJsonObjectRequest(API.URL_UPDATE + MyApplication.getInstance().getACCESSTION(), RequestMethod.POST);
+                request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
+                JSONObject object = new JSONObject();
 
-            object.put("page_id", pagesBean.getPage_id());
-            object.put("title", pagesBean.getTitle());
-            object.put("description", pagesBean.getDescription());
-            object.put("page_url", pagesBean.getPage_url());
-            object.put("comment", pagesBean.getComment());
-            object.put("icon_url", pagesBean.getIcon_url());
+                object.put("page_id", pagesBean.getPage_id());
+                object.put("title", pagesBean.getTitle());
+                object.put("description", pagesBean.getDescription());
+                object.put("page_url", pagesBean.getPage_url());
+                object.put("comment", pagesBean.getComment());
+                object.put("icon_url", pagesBean.getIcon_url());
 
-            CallServer.getHttpclient().add(5, request, new LoadUpdateListener(listener));
+                request.setDefineRequestBodyForJson(object);
+                CallServer.getHttpclient().add(5, request, new LoadUpdateListener(listener));
+            } else {
+                Request<JSONObject> request = NoHttp.createJsonObjectRequest(API.URL_ADDPAGE + MyApplication.getInstance().getACCESSTION(), RequestMethod.POST);
+                request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
+                JSONObject object = new JSONObject();
 
+                object.put("title", pagesBean.getTitle());
+                object.put("description", pagesBean.getDescription());
+                object.put("page_url", pagesBean.getPage_url());
+                object.put("comment", pagesBean.getComment());
+                object.put("icon_url", pagesBean.getIcon_url());
+
+                request.setDefineRequestBodyForJson(object);
+                CallServer.getHttpclient().add(6, request, new LoadUpdateListener(listener));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -77,6 +92,8 @@ public class UpdateCompl implements UpdateModel {
                     listener.onSuccess(1, 4, pic_url);
                 } else if (what == 5) {
                     listener.onSuccess(1, 5, "修改成功!");
+                } else if (what == 6) {
+                    listener.onSuccess(1, 6, "添加成功!");
                 } else {
                     listener.onFail(object.toString());
                 }

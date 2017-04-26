@@ -63,4 +63,25 @@ public class MainPresenter extends BasePresenter<MainView> {
         }
     }
 
+
+    public void FetchRelation(int device_id, int page_ids) {
+        if (model != null) {
+            model.loadRelation(new MainModel.loadRelationListener() {
+                @Override
+                public void onSuccess(String msg) {
+                    if (view != null) {
+                        view.onRelationS(msg);
+                    }
+                }
+
+                @Override
+                public void onFail(String msg) {
+                    if (view != null) {
+                        view.onFail(msg);
+                    }
+                }
+            }, device_id, page_ids);
+        }
+    }
+
 }

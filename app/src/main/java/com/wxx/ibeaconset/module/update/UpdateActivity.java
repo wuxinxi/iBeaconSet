@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -16,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.wxx.ibeaconset.R;
 import com.wxx.ibeaconset.Utils.Util;
 import com.wxx.ibeaconset.base.BaseActivity;
@@ -25,7 +25,6 @@ import com.yanzhenjie.nohttp.Logger;
 import java.io.InputStream;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -67,6 +66,8 @@ public class UpdateActivity extends BaseActivity<UpdateView, UpdatePresenter> im
 
     private Bitmap bitmap = null;
 
+    private static final int DEFAULT_CODE = 0;
+
     @Override
     protected UpdatePresenter createPresenter() {
         return new UpdatePresenter(this);
@@ -76,6 +77,8 @@ public class UpdateActivity extends BaseActivity<UpdateView, UpdatePresenter> im
     protected int initLayout() {
         return R.layout.activity_update_page;
     }
+
+    private String activity = null;
 
     @Override
     protected void initView() {
@@ -87,23 +90,34 @@ public class UpdateActivity extends BaseActivity<UpdateView, UpdatePresenter> im
     @Override
     protected void initData() {
         bean = getIntent().getParcelableExtra("pageList");
-        if (bean == null) return;
-        title.setText(bean.getTitle());
-        des.setText(bean.getDescription());
-        comment.setText(bean.getComment());
-        url.setText(bean.getPage_url());
-        pageId.setText(bean.getPage_id());
+        if (bean == null) {
+            activity = "main";
+            bean = new PageList.DataBean.PagesBean();
+            inputPageid.setVisibility(View.GONE);
+        } else {
+            activity = "manager";
+            title.setText(bean.getTitle());
+            des.setText(bean.getDescription());
+            comment.setText(bean.getComment());
+            url.setText(bean.getPage_url());
+            pageId.setText(bean.getPage_id() + "");
+            Picasso.with(this).load(bean.getIcon_url()).placeholder(R.mipmap.timg).error(R.drawable.ic_ico_load_fail).into(img);
+        }
     }
 
     @Override
     public void onSuccess(int code, int type, String msg) {
         if (code == 1 && type == 4) {
             bean.setIcon_url(msg);
-            mPresenter.fetchUpdate(bean);
+            mPresenter.fetchUpdate(bean, activity);
         } else if (code == 1 && type == 5) {
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+            setResult(DEFAULT_CODE);
+            finishActivityFromRight();
+        } else {
             finishActivityFromRight();
         }
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -130,21 +144,22 @@ public class UpdateActivity extends BaseActivity<UpdateView, UpdatePresenter> im
                 bean.setTitle(title.getText().toString());
                 bean.setDescription(des.getText().toString());
                 bean.setComment(comment.getText().toString());
-                bean.setPage_id(Integer.valueOf(pageId.getText().toString()));
+                if (activity.equals("manager"))
+                    bean.setPage_id(Integer.valueOf(pageId.getText().toString()));
                 bean.setPage_url(url.getText().toString());
-                if (null == imagePath) {
-                    Toast.makeText(this, "图片不能为空", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (TextUtils.isEmpty(title.getText().toString()) ||
-                            TextUtils.isEmpty(des.getText().toString()) ||
-                            TextUtils.isEmpty(url.getText().toString()) ||
-                            TextUtils.isEmpty(pageId.getText().toString())) {
-                        Toast.makeText(this, "必填参数缺省", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                if (TextUtils.isEmpty(title.getText().toString()) ||
+                        TextUtils.isEmpty(des.getText().toString()) ||
+                        TextUtils.isEmpty(url.getText().toString())) {
+                    Toast.makeText(this, "必填参数缺省", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (imagePath != null) {
                     InputStream stream = Util.Bitmap2InputStream(bitmap, 100);
                     mPresenter.addImage(stream);
+                } else {
+                    mPresenter.fetchUpdate(bean, activity);
                 }
+
                 break;
             default:
                 break;
@@ -157,12 +172,12 @@ public class UpdateActivity extends BaseActivity<UpdateView, UpdatePresenter> im
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Logger.d("requestCode=" + requestCode + ",resultCode=" + resultCode);
         if (requestCode == 1) {
             if (data != null) {
                 Uri uri = data.getData();
                 imagePath = Util.getImagePath(getApplicationContext(), uri);
-                Logger.d("imagePath:" + imagePath);
-
+                if (imagePath == null) return;
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(imagePath, options);
@@ -171,8 +186,6 @@ public class UpdateActivity extends BaseActivity<UpdateView, UpdatePresenter> im
                 options.inSampleSize = (int) Math.ceil(radio);
                 options.inJustDecodeBounds = false;
                 bitmap = BitmapFactory.decodeFile(imagePath, options);
-
-                img.setBackground(null);
                 img.setImageBitmap(bitmap);
             }
         }
@@ -186,10 +199,4 @@ public class UpdateActivity extends BaseActivity<UpdateView, UpdatePresenter> im
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 }

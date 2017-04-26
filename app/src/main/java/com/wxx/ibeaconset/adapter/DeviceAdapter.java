@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.wxx.ibeaconset.R;
 import com.wxx.ibeaconset.Utils.Util;
 import com.wxx.ibeaconset.bean.DeviceList;
+import com.wxx.ibeaconset.inte.OnIteLongClick;
 import com.wxx.ibeaconset.inte.OnItemclick;
 import com.wxx.ibeaconset.viewholder.DeviceHolder;
 
@@ -22,13 +23,14 @@ import java.util.List;
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceHolder> {
 
     private OnItemclick itemclick;
+    private OnIteLongClick onIteLongClick;
     private List<DeviceList.DataBean.DevicesBean> devicesBeanList;
     private LayoutInflater mInflater;
 
     @Override
     public DeviceHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mInflater = LayoutInflater.from(parent.getContext());
-        return new DeviceHolder(mInflater.inflate(R.layout.item_device_list, parent, false), itemclick, devicesBeanList);
+        return new DeviceHolder(mInflater.inflate(R.layout.item_device_list, parent, false), itemclick, onIteLongClick, devicesBeanList);
     }
 
     @Override
@@ -53,6 +55,10 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceHolder> {
 
     public void setItemclick(OnItemclick itemclick) {
         this.itemclick = itemclick;
+    }
+
+    public void setItemLongClick(OnIteLongClick iteLongClick) {
+        this.onIteLongClick = iteLongClick;
     }
 
     public void add(List<DeviceList.DataBean.DevicesBean> devicesBeanList) {
