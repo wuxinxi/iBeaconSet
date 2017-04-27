@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -178,7 +179,10 @@ public class MainActivity extends BaseActivity<MainView, MainPresenter> implemen
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        mPresenter.FetchRelation(list.get(postion - 1).getDevice_id(), Integer.valueOf(editText.getText().toString().trim()));
+                        if (TextUtils.isEmpty(editText.getText().toString()))
+                            Toast.makeText(MainActivity.this, "页面ID不能为空！", Toast.LENGTH_SHORT).show();
+                        else
+                            mPresenter.FetchRelation(list.get(postion - 1).getDevice_id(), Integer.valueOf(editText.getText().toString().trim()));
                     }
                 }).setNegativeButton("取消", null).show();
     }
